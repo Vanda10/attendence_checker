@@ -1,10 +1,8 @@
-import datetime
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from database.database import Base
 from datetime import datetime, time
-
-Base = declarative_base()
+from sqlalchemy import Column, Integer, DateTime, String
+from sqlalchemy.sql import func
 
 class SessionModel(Base):
     __tablename__ = 'sessions'
@@ -50,10 +48,10 @@ class user(Base):
 class AttendanceRecord(Base):
     __tablename__ = 'attendance_records'
 
-    attendance_id = Column(Integer, primary_key=True, index=True)
+    attendance_id = Column(Integer, primary_key=True, autoincrement=True) 
     user_id = Column(Integer, index=True)
     session_id = Column(Integer, index=True)
-    timestamp = Column(DateTime, default=datetime)
+    timestamp = Column(DateTime, server_default=func.now())
 
 class AttendanceRequest(BaseModel):
     user_id: int
