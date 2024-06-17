@@ -7,3 +7,4 @@ qrcode
 sqlalchemy
 typing
 datetime
+psycopg2-binary
