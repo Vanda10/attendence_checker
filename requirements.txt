@@ -3,3 +3,7 @@ uvicorn[standard]
 pydantic
 gunicorn
 pymongo
+qrcode
+sqlalchemy
+typing
+datetime
