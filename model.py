@@ -44,7 +44,6 @@ class user(Base):
     password = Column(String, index=True)
     dob = Column(String, index=True)
 
-
 class AttendanceRecord(Base):
     __tablename__ = 'attendance_records'
 
