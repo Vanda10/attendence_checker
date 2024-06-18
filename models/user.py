@@ -14,6 +14,7 @@ class User(Base):
     email = Column(String, index=True)
     password = Column(String, index=True)
     dob = Column(String, index=True)
+    hashed_password = Column(String)
 
 #Schemas for pydantic model
 class UserLogin(BaseModel):
@@ -25,4 +26,4 @@ class UserResponse(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True
