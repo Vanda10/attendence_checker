@@ -1,4 +1,3 @@
-import datetime
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -33,29 +32,3 @@ class SessionInfo(SessionBase):
 
     class Config:
         from_attributes = True
-
-
-class user(Base):
-    __tablename__ = 'users'
-
-    user_id = Column(Integer, primary_key=True, index=True)
-    user_role = Column(String, index=True)
-    user_name = Column(String, index=True)
-    class_code = Column(String, index=True)
-    email = Column(String, index=True)
-    password = Column(String, index=True)
-    dob = Column(String, index=True)
-
-
-class AttendanceRecord(Base):
-    __tablename__ = 'attendance_records'
-
-    attendance_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, index=True)
-    session_id = Column(Integer, index=True)
-    timestamp = Column(DateTime, default=datetime)
-
-class AttendanceRequest(BaseModel):
-    user_id: int
-    session_id: int
-    timestamp: datetime

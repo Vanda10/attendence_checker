@@ -5,6 +5,7 @@ from typing import List, Annotated
 from database.database import engine
 from sqlalchemy.ext.declarative import declarative_base
 from controller.controller import router as class_router
+from auth.auth import router as auth_router
 
 Base = declarative_base()
 
@@ -17,6 +18,8 @@ def redirect_to_docs():
     return RedirectResponse(url="/docs")
 
 app.include_router(class_router, prefix="/api")
+
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 if __name__ == "__main__":
     import uvicorn

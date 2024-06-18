@@ -8,3 +8,8 @@ sqlalchemy
 typing
 datetime
 psycopg2-binary
+python-jose
+python-multipart
+passlib[bcrypt]
+pytest-mock
+alembic
