@@ -24,6 +24,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 
 @router.get("/me", response_model=UserResponse)
+
 def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     payload = verify_token(token)
     if payload is None:
@@ -32,3 +33,6 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
+
+def get_user(current_user: User = Depends(read_users_me)):
+    return current_user
