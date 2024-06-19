@@ -19,7 +19,7 @@ def redirect_to_docs():
 
 app.include_router(class_router, prefix="/api")
 
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(auth_router, prefix="", tags=["auth"]) 
 
 if __name__ == "__main__":
     import uvicorn
