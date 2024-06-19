@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import database.database as database  # Adjust the import path accordingly
 from models.attendance_record import AttendanceRecord, AttendanceRequest
 from models.session import SessionModel, SessionInfo
+from typing import List
 
 
 router = APIRouter()
@@ -23,6 +24,14 @@ def get_session_name(db: Session = Depends(database.get_db)):
         for session in sessions
     ]
     return session_info
+
+@router.get("/sessions/by_class_code/{class_code}", response_model=List[SessionInfo])
+def get_sessions_by_class_code(class_code: str, db: Session = Depends(database.get_db)):
+    sessions = db.query(SessionModel).filter(SessionModel.class_code == class_code).all()
+    if not sessions:
+        raise HTTPException(status_code=404, detail="No sessions found for the provided class code")
+    return sessions
+
 
 @router.get("/sessions/{session_id}", response_model=SessionInfo)
 def read_session(session_id: int, db: Session = Depends(database.get_db)):
