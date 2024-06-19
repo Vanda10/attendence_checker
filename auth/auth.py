@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from sqlalchemy.orm import Session
 from . import utils, token
+from auth.token import verify_token
 from models.user import UserResponse, UserLogin, User
 from database.database import get_db
 
@@ -24,7 +25,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @router.get("/me", response_model=UserResponse)
 def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = token.verify_token(token)
+    payload = verify_token(token)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     user = db.query(User).filter(User.email == payload.get("sub")).first()
