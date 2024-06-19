@@ -18,9 +18,9 @@ class SessionModel(Base):
 
 # Pydantic models
 class SessionBase(BaseModel):
-    session_date: datetime
-    session_start_time: time
-    session_end_time: time
+    session_date: str
+    session_start_time: str
+    session_end_time: str
     session_name: str
     class_code: str
 
