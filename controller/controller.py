@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import database.database as database  # Adjust the import path accordingly
-from models.attendance_record import AttendanceRecord, AttendanceRequest
+from models.attendance_record import AttendanceRecord, AttendanceRequest, AttendanceResponse
 from models.session import SessionModel, SessionInfo
 from typing import List
 from datetime import date
-from sqlalchemy import cast, Date
+from sqlalchemy import cast, Date, desc
 
 
 router = APIRouter()
@@ -72,3 +72,44 @@ def create_attendance_record(attendance_request: AttendanceRequest, db: Session 
     db.commit()
     db.refresh(attendance_record)
     return {"status": "success", "attendance_id": attendance_record.attendance_id}
+
+# New endpoint to fetch attendance records by user ID
+@router.get("/attendance_record/by_user/{user_id}", response_model=List[AttendanceResponse])
+def get_attendance_by_user(user_id: int, db: Session = Depends(database.get_db)):
+    records = db.query(AttendanceRecord).filter(AttendanceRecord.user_id == user_id).all()
+    if not records:
+        raise HTTPException(status_code=404, detail="No attendance records found for the provided user ID")
+    # Convert fields to string
+    for record in records:
+        record.attendance_id = str(record.attendance_id)
+        record.user_id = str(record.user_id)
+        record.session_id = str(record.session_id)
+        record.timestamp = record.timestamp.isoformat()
+    return records
+
+@router.get("/sessions/attended/{user_id}", response_model=List[SessionInfo])
+def get_sessions_attended(user_id: int, db: Session = Depends(database.get_db)):
+    attended_sessions = db.query(SessionModel).join(
+        AttendanceRecord, SessionModel.session_id == AttendanceRecord.session_id
+    ).filter(
+        AttendanceRecord.user_id == user_id
+    ).all()
+    
+    if not attended_sessions:
+        raise HTTPException(status_code=404, detail="No attended sessions found for the provided user ID")
+    
+    return attended_sessions
+
+
+# New endpoint to fetch the last session attended by user ID
+@router.get("/attendance_record/last_session/{user_id}", response_model=AttendanceResponse)
+def get_last_session_attended(user_id: int, db: Session = Depends(database.get_db)):
+    last_record = db.query(AttendanceRecord).filter(AttendanceRecord.user_id == user_id).order_by(desc(AttendanceRecord.timestamp)).first()
+    if last_record is None:
+        raise HTTPException(status_code=404, detail="No attendance records found for the provided user ID")
+    # Convert fields to string
+    last_record.attendance_id = str(last_record.attendance_id)
+    last_record.user_id = str(last_record.user_id)
+    last_record.session_id = str(last_record.session_id)
+    last_record.timestamp = last_record.timestamp.isoformat()
+    return last_record

@@ -17,3 +17,12 @@ class AttendanceRequest(BaseModel):
     user_id: int
     session_id: int
     timestamp: datetime 
+
+class AttendanceResponse(BaseModel):
+    attendance_id: str
+    user_id: str
+    session_id: str
+    timestamp: str
+
+    class Config:
+        from_attributes = True
